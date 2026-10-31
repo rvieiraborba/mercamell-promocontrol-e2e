@@ -1,0 +1,2 @@
+Os testes criam nomes e IDs de transação FICTÍCIOS durante a execução.
+Não copie bancos de dados, comprovantes ou cadastros de moradores reais para esta pasta.
