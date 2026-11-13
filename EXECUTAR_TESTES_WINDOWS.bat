@@ -10,7 +10,7 @@ echo Feche o ambiente de demonstracao na porta 8768 antes de iniciar.
 echo.
 if not exist "node_modules\@playwright\test" (
   echo Dependencias nao instaladas. Execute primeiro:
-  echo    npm install
+  echo    npm ci
   echo    npx playwright install chromium
   pause
   exit /b 1

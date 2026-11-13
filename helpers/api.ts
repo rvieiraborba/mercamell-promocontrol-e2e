@@ -2,7 +2,7 @@ import { expect, type APIRequestContext } from '@playwright/test';
 
 export interface Ticket { number: number; status: 'ACTIVE' | 'VOID' | 'WINNER' | 'REMOVED'; id: number }
 export interface Buyer { id: number; name: string; apartment: string; spent_cents: number; entitled: number; numbers: Ticket[] }
-export interface Winner { prize_order: number; prize: string; number: number; participant_id: number; name: string }
+export interface Winner { prize_order: number; prize: string; number: number; participant_id: number; name: string; apartment: string }
 export interface EventState {
   id: number;
   name: string;
@@ -10,7 +10,8 @@ export interface EventState {
   tiers: { amount_cents: number; tickets: number }[];
   brands: string[];
   participants: Buyer[];
-  purchases: { transaction_id: string; amount_cents: number; voided_at: string | null }[];
+  purchases: { id: number; purchase_code: string; event_seq: number; transaction_id: string; amount_cents: number; voided_at: string | null }[];
+  prize_images: Record<string, string>;
   winners: Winner[];
   attempts: { participant_id: number; number: number; status: string }[];
   pending_draw: { number: number; name: string; participant_id: number } | null;

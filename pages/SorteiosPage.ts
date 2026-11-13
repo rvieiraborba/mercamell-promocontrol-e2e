@@ -4,7 +4,7 @@ export class SorteiosPage {
   constructor(private readonly page: Page) {}
 
   async abrir() {
-    await this.page.locator('[data-page="draw"]').click();
+    await this.page.locator('nav [data-page="draw"]').click();
     await expect(this.page.locator('#pageTitle')).toHaveText('Sorteios');
   }
 
