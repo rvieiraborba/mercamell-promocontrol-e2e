@@ -31,7 +31,7 @@ test('CT07/CT08/CT09 - regras, bônus de marca e máximo de quatro números', as
   expect(p.spent_cents).toBe(18000);
   expect(p.numbers.filter(n => n.status === 'ACTIVE')).toHaveLength(4);
 
-  await page.locator('[data-page="tickets"]').click();
+  await page.locator('nav [data-page="tickets"]').click();
   const row = page.locator('table tbody tr').filter({ hasText: person });
   await expect(row.locator('.num.active')).toHaveCount(4);
   expect(new Set(p.numbers.map(t => t.number)).size).toBe(4);
