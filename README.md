@@ -23,12 +23,27 @@ A porta 8768 deve estar livre. Se o modo de demonstração estiver aberto, feche
 ## Instalação (primeira vez)
 
 ```bash
-npm install
+npm ci
 npm run setup:app
 npx playwright install chromium
 ```
 
 > `npm run setup:app` baixa ou atualiza o código da aplicação pública para `_application/`, sem dados de compradores. Por padrão os testes usam a branch `main`.
+
+O `package-lock.json` fixa as dependências. Se `_application` tiver alterações
+locais, a atualização é recusada para preservá-las. O setup não usa reset hard.
+Para outra versão, defina `MERCAMELL_APP_REF` com branch, tag ou SHA antes do setup.
+O script registra o SHA preparado e usa checkout detached na cópia de testes.
+
+No PowerShell:
+
+```powershell
+$env:MERCAMELL_APP_REF = 'develop'
+npm run setup:app
+# Se necessário, substitua pelo caminho do seu Python instalado:
+$env:PYTHON_CMD = '"C:/caminho com espacos/python.exe"'
+npm test
+```
 
 ## Executando os testes
 
@@ -61,6 +76,14 @@ Para testar outra cópia de código já disponível, defina `MERCAMELL_APP_SOURC
 | CT12 | Resortear por ausência sem repetir morador recusado |
 | CT14 | Cancelar apuração preservando compradores e compras |
 | CT15 | Exportar imagem PNG dos três vencedores |
+| CT16 | Código automático, sequência independente por evento e preservação após estorno |
+| CT17 | Foto: upload, substituição, persistência, inclusão em backup e remoção |
+| CT18 | Rejeição de arquivo inválido apresentado como PNG |
+
+São 14 testes automatizados; alguns agrupam mais de um cenário.
+O resumo final também verifica o apartamento associado a cada vencedor.
+Captura real de tela/áudio e inspeção visual da exportação seguem o
+[roteiro manual](test-data/HOMOLOGACAO_MANUAL_V3.1.md).
 
 Os testes validam **regras e invariantes**, nunca um número pré-definido. O sorteio é aleatório, e a suíte verifica se o sorteado pertence ao conjunto elegível e está corretamente vinculado ao participante.
 
@@ -69,6 +92,18 @@ Os testes validam **regras e invariantes**, nunca um número pré-definido. O so
 O workflow `.github/workflows/playwright.yml` faz checkout **dos dois repositórios**, instala Node/Python/Chromium, executa TypeScript e Playwright e anexa relatórios para download. A aplicação precisa permanecer acessível ao workflow (atualmente é pública). Para deixá-la privada futuramente, o workflow precisará de credencial de leitura com permissões mínimas.
 
 Os testes E2E rodam após commits neste repositório e manualmente por `workflow_dispatch`. **Alterar a aplicação não dispara automaticamente este workflow** — isso exigiria um gatilho explícito, que pode ser configurado depois.
+
+O CI valida pushes em main/develop/feature/fix/hotfix e PRs para main/develop.
+Na execução manual, `app_ref` permite escolher a versão da aplicação;
+por padrão usa main e registra o SHA exato nos logs. Dependências são instaladas
+com `npm ci`; relatórios, screenshots, vídeos e traces de falhas ficam como
+artefatos por 14 dias. Não há deploy nem alteração do repositório do produto.
+
+## Branches e contribuição
+
+Mesmo padrão do produto: main estável, develop para integração e uma branch
+feature/, fix/ ou hotfix/ por mudança concreta. Consulte [CONTRIBUTING.md](CONTRIBUTING.md).
+As proteções de branch ficam para configuração posterior pelo proprietário.
 
 ## Observação
 

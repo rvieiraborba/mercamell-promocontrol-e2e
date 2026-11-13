@@ -13,7 +13,7 @@ test('CT10/CT11/CT13 - encerra cadastro, sorteia elegíveis e impede dois prêmi
   const names = await cadastrarParticipantesParaSorteio(page, 4);
   const sorteios = new SorteiosPage(page);
   await sorteios.congelar();
-  await page.locator('[data-page="purchases"]').click();
+  await page.locator('nav [data-page="purchases"]').click();
   await expect(page.locator('#purchaseForm')).toHaveCount(0);
   await sorteios.abrir();
 
@@ -36,7 +36,10 @@ test('CT10/CT11/CT13 - encerra cadastro, sorteia elegíveis e impede dois prêmi
     expect(buyer.numbers.filter(n => n.status === 'ACTIVE')).toHaveLength(0);
   }
   await sorteios.mostrarResultadoFinal();
-  for (const winner of state.winners) await expect(page.locator('#drawModal')).toContainText(winner.name);
+  for (const winner of state.winners) {
+    const row = page.locator('.winner-summary-row').filter({ hasText: winner.name });
+    await expect(row).toContainText(`Apartamento ${winner.apartment}`);
+  }
 });
 
 test('CT12 - resortear por ausência descarta o participante recusado', async ({ page, request }) => {
@@ -81,7 +84,7 @@ test('CT14 - cancelar sorteio reabre cadastro mantendo compras e números', asyn
   expect(after.participants.map(p => p.name).sort()).toEqual(before.participants.map(p => p.name).sort());
   expect(after.purchases.map(p => p.transaction_id).sort()).toEqual(before.purchases.map(p => p.transaction_id).sort());
   expect(after.participants.flatMap(p => p.numbers).every(n => n.status === 'ACTIVE')).toBe(true);
-  await page.locator('[data-page="purchases"]').click();
+  await page.locator('nav [data-page="purchases"]').click();
   await expect(page.locator('#purchaseForm')).toBeVisible();
 });
 

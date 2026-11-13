@@ -10,7 +10,7 @@ export class EventosPage {
   }
 
   async criar(nome: string, tiers = '25 = 1\n50 = 2\n80 = 3', premios = 'Air fryer\nSanduicheira\nAbridor elétrico de vinho') {
-    await this.page.locator('[data-page="events"]').click();
+    await this.page.locator('nav [data-page="events"]').click();
     await this.page.locator('[data-new-event]').click();
     const form = this.page.locator('#eventForm');
     await form.locator('[name="name"]').fill(nome);
@@ -22,7 +22,7 @@ export class EventosPage {
   }
 
   async abrir(nome: string) {
-    await this.page.locator('[data-page="events"]').click();
+    await this.page.locator('nav [data-page="events"]').click();
     const card = this.page.locator('.event-card').filter({ hasText: nome });
     await card.locator('[data-open-event]').click();
     await expect(this.page.locator('#pageTitle')).toHaveText('Visão geral');

@@ -4,7 +4,7 @@ export class CompradoresPage {
   constructor(private readonly page: Page) {}
 
   async abrir() {
-    await this.page.locator('[data-page="people"]').click();
+    await this.page.locator('nav [data-page="people"]').click();
     await expect(this.page.locator('#pageTitle')).toHaveText('Compradores');
   }
 

@@ -2,10 +2,22 @@ name: Playwright E2E - Mercamell PromoControl
 
 on:
   push:
-    branches: [main]
+    branches: [main, develop, 'feature/**', 'fix/**', 'hotfix/**']
   pull_request:
-    branches: [main]
+    branches: [main, develop]
   workflow_dispatch:
+    inputs:
+      app_ref:
+        description: 'Branch, tag ou SHA da aplicação'
+        required: true
+        default: main
+
+permissions:
+  contents: read
+
+concurrency:
+  group: e2e-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
 
 jobs:
   e2e:
@@ -14,23 +26,28 @@ jobs:
     steps:
       - name: Checkout automação E2E
         uses: actions/checkout@v4
+        with:
+          persist-credentials: false
       - name: Checkout da aplicação (repositório separado)
         uses: actions/checkout@v4
         with:
           repository: rvieiraborba/mercamell-promocontrol
-          ref: main
+          ref: ${{ inputs.app_ref || 'main' }}
           path: _application
           persist-credentials: false
       - name: Configurar Node.js
         uses: actions/setup-node@v4
         with:
           node-version: '22'
+          cache: npm
       - name: Configurar Python
         uses: actions/setup-python@v5
         with:
           python-version: '3.12'
       - name: Instalar dependências dos testes
-        run: npm install --no-audit --no-fund
+        run: npm ci --no-audit --no-fund
+      - name: Registrar versão da aplicação testada
+        run: git -C _application rev-parse HEAD
       - name: Instalar Chromium e bibliotecas
         run: npx playwright install --with-deps chromium
       - name: Verificar TypeScript
